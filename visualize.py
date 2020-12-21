@@ -30,8 +30,8 @@ def main():
     while cv2.waitKey(1) != ord("q"):  # for 'q' key
         err = cam.grab(runtime)
         if err == sl.ERROR_CODE.SUCCESS:
-            cam.retrieve_image(mat)
-            # cam.retrieve_measure(mat, sl.MEASURE.DEPTH, sl.MEM.CPU)
+            #cam.retrieve_image(mat)
+            cam.retrieve_measure(mat, sl.MEASURE.DEPTH, sl.MEM.CPU)
             cv2.imshow("ZED", mat.get_data())
 
     cv2.destroyAllWindows()

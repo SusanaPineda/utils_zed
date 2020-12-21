@@ -1,55 +1,70 @@
 """
-python3 capture.py /home/susi/Documents/captures/prueba_svo.svo /home/susi/Documents/captures/frames/
+python3 capture.py /home/susi/Documents/captures/prueba_svo
 """
 
 import sys
 import pyzed.sl as sl
-import cv2
-import os
+from signal import signal, SIGINT
 import gpsd
+import cv2
+
+cam = sl.Camera()
+cam.set_camera_settings(sl.VIDEO_SETTINGS.EXPOSURE, 0)
+
+
+def handler(signal_received, frame):
+    cam.disable_recording()
+    cam.close()
+    sys.exit(0)
+
+
+signal(SIGINT, handler)
 
 
 def main():
-    if len(sys.argv) != 3:
-        exit()
+    if not sys.argv or len(sys.argv) != 2:
+        exit(1)
 
-    filepath = sys.argv[1]
-    path = sys.argv[2]
-    print("Device: " + str(gpsd.device()))
-    print("Reading SVO file: {0}".format(filepath))
-
-    input_type = sl.InputType()
-    input_type.set_from_svo_file(filepath)
-    init = sl.InitParameters(input_t=input_type, svo_real_time_mode=False)
-    cam = sl.Camera()
-    status = cam.open(init)
-
-    if status != sl.ERROR_CODE.SUCCESS:
-        print(repr(status))
-        exit()
-
-    runtime = sl.RuntimeParameters()
-    mat = sl.Mat()
-    fr = 0
+    init = sl.InitParameters()
+    init.camera_resolution = sl.RESOLUTION.HD720
+    init.camera_fps = 30
+    init.depth_mode = sl.DEPTH_MODE.ULTRA  # Use ULTRA depth mode
+    init.coordinate_units = sl.UNIT.METER
+    init.depth_minimum_distance = 0.15
 
     gpsd.connect()
-    while cv2.waitKey(1) != ord("q"):  # for 'q' key
-        err = cam.grab(runtime)
-        if err == sl.ERROR_CODE.SUCCESS:
-            cam.retrieve_image(mat)
-            im = mat.get_data()
-            cv2.imshow("ZED", im)
-            cv2.imwrite(os.path.join(path, str(fr))+".png", im)
-            packet = gpsd.get_current()
-            print("  Latitude: " + str(packet.lat))
-            print(" Longitude: " + str(packet.lon))
-            print(" Track: " + str(packet.track))
-            fr = fr + 1
+    packet = gpsd.get_current()
 
-    cv2.destroyAllWindows()
-    cam.close()
-    print("\nFINISH")
+    print("  Mode: " + str(packet.mode))
 
+    status = cam.open(init)
+    if status != sl.ERROR_CODE.SUCCESS:
+        print(repr(status))
+        exit(1)
+
+    path_output = sys.argv[1]
+    recording_param = sl.RecordingParameters(path_output, sl.SVO_COMPRESSION_MODE.H265)
+    err = cam.enable_recording(recording_param)
+    if err != sl.ERROR_CODE.SUCCESS:
+        print(repr(status))
+        exit(1)
+
+    file = open(path_output.split('.')[0]+".txt", 'w')
+
+    runtime = sl.RuntimeParameters()
+    print("SVO is Recording, use q to stop.")
+    frames_recorded = 0
+
+    while True:
+        if cam.grab(runtime) == sl.ERROR_CODE.SUCCESS:
+            frames_recorded += 1
+            file.write(str(packet.lat)+" "+str(packet.lon)+" "+str(packet.track)+"\n")
+            print("Frame count: " + str(frames_recorded), end="\r")
+
+            if cv2.waitKey(20) & 0xFF == ord('q'):
+                break
+
+    file.close()
 
 if __name__ == "__main__":
     main()

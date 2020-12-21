@@ -7,6 +7,7 @@ import pyzed.sl as sl
 from signal import signal, SIGINT
 
 cam = sl.Camera()
+cam.set_camera_settings(sl.VIDEO_SETTINGS.EXPOSURE, 0)
 
 
 def handler(signal_received, frame):
@@ -24,7 +25,10 @@ def main():
 
     init = sl.InitParameters()
     init.camera_resolution = sl.RESOLUTION.HD720
-    init.depth_mode = sl.DEPTH_MODE.NONE
+    init.camera_fps = 30
+    init.depth_mode = sl.DEPTH_MODE.ULTRA  # Use ULTRA depth mode
+    init.coordinate_units = sl.UNIT.METER
+    init.depth_minimum_distance = 0.15
 
     status = cam.open(init)
     if status != sl.ERROR_CODE.SUCCESS:
@@ -32,7 +36,7 @@ def main():
         exit(1)
 
     path_output = sys.argv[1]
-    recording_param = sl.RecordingParameters(path_output, sl.SVO_COMPRESSION_MODE.H264)
+    recording_param = sl.RecordingParameters(path_output, sl.SVO_COMPRESSION_MODE.LOSSLESS)
     err = cam.enable_recording(recording_param)
     if err != sl.ERROR_CODE.SUCCESS:
         print(repr(status))
