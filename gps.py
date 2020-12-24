@@ -32,6 +32,8 @@ while True:  # All data is available via instantiated thread data stream attribu
     sleep(2)  # Sleep, or do other things for as long as you like.
 
 """
+
+
 #!/usr/bin/env python3
 
 import gpsd

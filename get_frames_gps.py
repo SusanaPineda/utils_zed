@@ -43,7 +43,7 @@ def main():
         exit(1)
 
     path_output = sys.argv[1]
-    recording_param = sl.RecordingParameters(path_output, sl.SVO_COMPRESSION_MODE.H265)
+    recording_param = sl.RecordingParameters(path_output, sl.SVO_COMPRESSION_MODE.LOSSLESS)
     err = cam.enable_recording(recording_param)
     if err != sl.ERROR_CODE.SUCCESS:
         print(repr(status))
