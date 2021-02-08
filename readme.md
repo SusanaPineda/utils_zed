@@ -2,8 +2,8 @@
 ```
 pip3 install gpsd-py3
 
-sudo apt install gpsd-clientes gpsd 
-sudo apt install libgps -dev
+sudo apt install gpsd-clients gpsd 
+sudo apt install libgps-dev
 ```
 
 Si pasados unos minutos no obtiene la posición GPS:
