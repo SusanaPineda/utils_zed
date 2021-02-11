@@ -32,6 +32,7 @@ def main():
     init.coordinate_units = sl.UNIT.METER
     init.depth_minimum_distance = 0.15
 
+
     gpsd.connect()
     packet = gpsd.get_current()
 
@@ -62,7 +63,7 @@ def main():
         while t < 60:
             if cam.grab(runtime) == sl.ERROR_CODE.SUCCESS:
                 file.write(str(packet.lat) + " " + str(packet.lon) + " " + str(packet.track) + "\n")
-                #print(str(packet.lat) + " " + str(packet.lon) + " " + str(packet.track) + "\n")
+                print(str(packet.lat) + " " + str(packet.lon) + " " + str(packet.track) + "\n")
             t = time.time() - t0
             print(str(t))
 

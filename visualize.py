@@ -17,6 +17,7 @@ def main():
     input_type = sl.InputType()
     input_type.set_from_svo_file(filepath)
     init = sl.InitParameters(input_t=input_type, svo_real_time_mode=False)
+    # init.depth_mode = sl.DEPTH_MODE.ULTRA
     cam = sl.Camera()
     status = cam.open(init)
 
@@ -25,13 +26,15 @@ def main():
         exit()
 
     runtime = sl.RuntimeParameters()
+    runtime.sensing_mode = sl.SENSING_MODE.FILL
+
     mat = sl.Mat()
 
     while cv2.waitKey(1) != ord("q"):  # for 'q' key
         err = cam.grab(runtime)
         if err == sl.ERROR_CODE.SUCCESS:
-            #cam.retrieve_image(mat)
-            cam.retrieve_measure(mat, sl.MEASURE.DEPTH, sl.MEM.CPU)
+            cam.retrieve_image(mat)
+            #cam.retrieve_image(mat, sl.VIEW.DEPTH)
             cv2.imshow("ZED", mat.get_data())
 
     cv2.destroyAllWindows()
