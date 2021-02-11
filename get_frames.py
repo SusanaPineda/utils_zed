@@ -1,5 +1,5 @@
 """
-python3 capture.py /home/susi/Documents/captures/prueba_svo.svo /home/susi/Documents/captures/frames/
+python3 capture.py /home/susi/Documents/captures/prueba_svo.svo /home/susi/Documents/captures/frames/ /home/susi/Documents/captures/depth/
 """
 
 import sys
@@ -9,11 +9,12 @@ import os
 
 
 def main():
-    if len(sys.argv) != 3:
+    if len(sys.argv) != 4:
         exit()
 
     filepath = sys.argv[1]
-    path = sys.argv[2]
+    rgb = sys.argv[2]
+    depth = sys.argv[3]
     print("Reading SVO file: {0}".format(filepath))
 
     input_type = sl.InputType()
@@ -27,16 +28,25 @@ def main():
         exit()
 
     runtime = sl.RuntimeParameters()
-    mat = sl.Mat()
+    mat_img = sl.Mat()
+    mat_depth = sl.Mat()
     fr = 0
+    cont = 0
     while cv2.waitKey(1) != ord("q"):  # for 'q' key
         err = cam.grab(runtime)
         if err == sl.ERROR_CODE.SUCCESS:
-            cam.retrieve_image(mat)
-            im = mat.get_data()
-            # cv2.imshow("ZED", mat.get_data())
-            cv2.imwrite(os.path.join(path, str(fr))+".png", im)
-            fr = fr + 1
+            if cont == 2:
+                cam.retrieve_image(mat_img)
+                cam.retrieve_image(mat_depth, sl.VIEW.DEPTH)
+                im = mat_img.get_data()
+                d = mat_depth.get_data()
+                cv2.imshow("ZED", mat_img.get_data())
+                cv2.imwrite(os.path.join(rgb, str(fr))+".png", im)
+                cv2.imwrite(os.path.join(depth, str(fr))+".png", d)
+                fr = fr + 1
+                cont = 0
+            else:
+                cont = cont + 1
 
     cv2.destroyAllWindows()
     cam.close()
