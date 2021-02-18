@@ -41,8 +41,8 @@ def main():
                 im = mat_img.get_data()
                 d = mat_depth.get_data()
                 cv2.imshow("ZED", mat_img.get_data())
-                cv2.imwrite(os.path.join(rgb, str(fr))+".png", im)
-                cv2.imwrite(os.path.join(depth, str(fr))+".png", d)
+                cv2.imwrite(os.path.join(rgb, filepath.split('\\')[-1].split('.')[0] + '-' + str(fr))+".png", im)
+                cv2.imwrite(os.path.join(depth, filepath.split('\\')[-1].split('.')[0] + '-' + str(fr))+".png", d)
                 fr = fr + 1
                 cont = 0
             else:

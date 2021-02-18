@@ -1,5 +1,5 @@
 """
-python3 capture.py /home/susi/Documents/captures/prueba_svo
+python3 capture.py /home/susi/Documents/captures/
 """
 
 import sys
@@ -7,6 +7,7 @@ import pyzed.sl as sl
 from signal import signal, SIGINT
 import gpsd
 import time
+import datetime
 
 cam = sl.Camera()
 cam.set_camera_settings(sl.VIDEO_SETTINGS.EXPOSURE, 0)
@@ -49,7 +50,9 @@ def main():
     while True:
         t = 0
         t0 = time.time()
-        path_output = sys.argv[1] + str(cont) + ".svo"
+        name = datetime.datetime.now()
+        path_output = name.strftime("%d_%m_%Y__%H_%M_") + ".svo"
+        path_output = sys.argv[1] + str(cont) + path_output
         recording_param = sl.RecordingParameters(path_output, sl.SVO_COMPRESSION_MODE.LOSSLESS)
         err = cam.enable_recording(recording_param)
         if err != sl.ERROR_CODE.SUCCESS:
