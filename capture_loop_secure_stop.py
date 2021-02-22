@@ -42,8 +42,8 @@ def main():
     	print("Opening ZED Camera...")
     status = cam.open(init)
     if status != sl.ERROR_CODE.SUCCESS:
-        print(repr(status)+'1')
-        exit(1)
+        print(repr(status)+'Camara no inicializada')
+        #exit(1)
     GPIO.setmode(GPIO.BCM)
     GPIO.setup(input_pin, GPIO.IN)
     
@@ -57,8 +57,8 @@ def main():
         recording_param = sl.RecordingParameters(path_output, sl.SVO_COMPRESSION_MODE.LOSSLESS)
         err = cam.enable_recording(recording_param)
         if err != sl.ERROR_CODE.SUCCESS:
-            print(repr(status)+'2')
-            exit(1)
+            print(repr(status)+'Error al crear el archivo')
+            #exit(1)
 
         runtime = sl.RuntimeParameters()
 
