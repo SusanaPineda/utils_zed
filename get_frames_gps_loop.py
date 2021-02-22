@@ -51,8 +51,8 @@ def main():
         t = 0
         t0 = time.time()
         name = datetime.datetime.now()
-        path_output = name.strftime("%d_%m_%Y__%H_%M_") + ".svo"
-        path_output = sys.argv[1] + str(cont) + path_output
+        path_output = name.strftime("%d_%m_%Y__%H_%M_") + str(cont) + ".svo"
+        path_output = sys.argv[1] + path_output
         recording_param = sl.RecordingParameters(path_output, sl.SVO_COMPRESSION_MODE.LOSSLESS)
         err = cam.enable_recording(recording_param)
         if err != sl.ERROR_CODE.SUCCESS:
