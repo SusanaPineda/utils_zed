@@ -17,8 +17,8 @@ def main():
     input_type = sl.InputType()
     input_type.set_from_svo_file(filepath)
     init = sl.InitParameters(input_t=input_type, svo_real_time_mode=False)
-    # init.depth_minimum_distance = 10
-    # init.depth_mode = sl.DEPTH_MODE.ULTRA
+    #init.depth_minimum_distance = 1
+    init.depth_mode = sl.DEPTH_MODE.ULTRA
     cam = sl.Camera()
     status = cam.open(init)
 

@@ -20,6 +20,7 @@ def main():
     input_type = sl.InputType()
     input_type.set_from_svo_file(filepath)
     init = sl.InitParameters(input_t=input_type, svo_real_time_mode=False)
+    init.depth_mode = sl.DEPTH_MODE.ULTRA
     cam = sl.Camera()
     status = cam.open(init)
 
@@ -28,6 +29,8 @@ def main():
         exit()
 
     runtime = sl.RuntimeParameters()
+    runtime.sensing_mode = sl.SENSING_MODE.FILL
+
     mat_img = sl.Mat()
     mat_depth = sl.Mat()
     fr = 0
@@ -41,8 +44,8 @@ def main():
                 im = mat_img.get_data()
                 d = mat_depth.get_data()
                 cv2.imshow("ZED", mat_img.get_data())
-                cv2.imwrite(os.path.join(rgb, filepath.split('\\')[-1].split('.')[0] + '-' + str(fr))+".png", im)
-                cv2.imwrite(os.path.join(depth, filepath.split('\\')[-1].split('.')[0] + '-' + str(fr))+".png", d)
+                cv2.imwrite(os.path.join(rgb, filepath.split('/')[-1].split('.')[0] + '-' + str(fr))+".png", im)
+                cv2.imwrite(os.path.join(depth, filepath.split('/')[-1].split('.')[0] + '-' + str(fr))+".png", d)
                 fr = fr + 1
                 cont = 0
             else:
